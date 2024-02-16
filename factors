@@ -1,22 +1,11 @@
+#!/bin/bash
 
-import sys
-
-def factorize(n):
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return (i, n // i)
-    return (1, n)
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: factors <file>")
-        return
-
-    with open(sys.argv[1], 'r') as file:
-        for line in file:
-            n = int(line)
-            p, q = factorize(n)
-            print(f"{n}={p}*{q}")
-
-if __name__ == "__main__":
-    main()
+while IFS= read -r number
+do
+    for (( i=2; i*i<=number; i++ )); do
+        if (( number%i == 0 )); then
+            echo "$number=$i*$((number/i))"
+            break
+        fi
+    done
+done < "$1"
