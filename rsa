@@ -1,27 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env python3
+import sys
+import os
+import math
 
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, math.isqrt(n) + 1):
+        if n % i == 0:
+            return False
+    return True
 
-is_prime() {
-    local num=$1
-    local sqrtnum=$(echo "sqrt($num)" | bc)
-    for ((i=2; i<=sqrtnum; i++)); do
-        if ((num % i == 0)); then
-            return 1
-        fi
-    done
-    return 0
-}
+def factorize(n):
+    for i in range(2, math.isqrt(n) + 1):
+        if n % i == 0 and is_prime(i) and is_prime(n // i):
+            return i, n // i
+    return n, 1
 
+def main(file_name):
+    if not os.path.isfile(file_name):
+        print(f"Error: The file '{file_name}' does not exist.")
+        return
+    try:
+        with open(file_name, 'r') as f:
+            line = f.readline().strip()
+            if line: # Check if line is not empty
+                try:
+                    n = int(line) # Try to convert line to integer
+                except ValueError: # Handle case where line is not a valid integer
+                    print(f"Error: '{line}' is not a valid integer.")
+                    return
+                p, q = factorize(n)
+                print(f"{n}={p}*{q}")
+            else:
+                print("Error: The file is empty.")
+    except IOError:
+        print(f"Error: Could not read the file '{file_name}'.")
 
-num=$(cat $1)
-
-
-for ((i=2; i*i<=num; i++)); do
-    if ((num % i == 0)); then
-        other=$((num/i))
-        if is_prime $i && is_prime $other; then
-            echo "$num=$i*$other"
-            break
-        fi
-    fi
-done
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: ./rsa <file_name>")
+    else:
+        main(sys.argv[1

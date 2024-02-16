@@ -1,11 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-while IFS= read -r number
-do
-    for (( i=2; i*i<=number; i++ )); do
-        if (( number%i == 0 )); then
-            echo "$number=$i*$((number/i))"
-            break
-        fi
-    done
-done < "$1"
+import sys
+import math
+
+def factorize(n):
+    for i in range(2, math.isqrt(n) + 1):
+        if n % i == 0:
+            return i, n // i
+    return n, 1
+
+def main(file_name):
+    with open(file_name, 'r') as f:
+        for line in f:
+            n = int(line.strip())
+            p, q = factorize(n)
+            print(f"{n}={p}*{q}")
+
+if __name__ == "__main__":
+    main(sys.argv[1])
